@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -27,6 +27,18 @@ async function run() {
             const result = await studentCollection.insertOne(student);
             console.log('inserted')
             res.send({ message: 'successfully inserted' })
+        })
+        app.put('/student/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedStudent = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: updatedStudent
+            };
+            const result = await studentCollection.updateOne(filter, updateDoc, options);
+
+            res.send(result)
         })
     } finally {
         // await client.close();
