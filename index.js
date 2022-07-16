@@ -16,18 +16,28 @@ async function run() {
     try {
         await client.connect()
         const studentCollection = client.db("studentCrud").collection("students");
+        // get all student information 
         app.get('/students', async (req, res) => {
             const query = {};
             const cursor = studentCollection.find(query);
             const students = await cursor.toArray();
             res.send({ message: 'successfully get all information', result: students })
         })
-        app.post('/student', async (req, res) => {
-            const student = req.body;
-            const result = await studentCollection.insertOne(student);
-            console.log('inserted')
-            res.send({ message: 'successfully inserted' })
+        //get single student information
+        app.get('/student/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await studentCollection.findOne(filter);
+            res.send(result);
         })
+        // create new student 
+        app.post('/student', async (req, res) => {
+            const newstudent = req.body;
+            const result = await studentCollection.insertOne(newstudent);
+            console.log('inserted')
+            res.send(result)
+        })
+        // update 
         app.put('/student/:id', async (req, res) => {
             const id = req.params.id;
             const updatedStudent = req.body;
@@ -38,6 +48,14 @@ async function run() {
             };
             const result = await studentCollection.updateOne(filter, updateDoc, options);
 
+            res.send(result)
+        })
+
+        // delete 
+        app.delete('/deleteStudent/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await studentCollection.deleteOne(filter);
             res.send(result)
         })
     } finally {
