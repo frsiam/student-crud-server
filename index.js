@@ -7,8 +7,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-//username=studentCrud
-//pass: sGRC3AtBnTkXnm4Y
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mdofc.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -34,7 +32,6 @@ async function run() {
         app.post('/student', async (req, res) => {
             const newstudent = req.body;
             const result = await studentCollection.insertOne(newstudent);
-            console.log('inserted')
             res.send(result)
         })
         // update 
@@ -66,7 +63,7 @@ run().catch(console.dir);
 
 
 app.get('/home', (req, res) => {
-    res.send('running')
+    res.send('student crud running')
 })
 
 app.listen(port, () => {
